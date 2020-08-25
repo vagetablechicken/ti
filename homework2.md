@@ -121,16 +121,16 @@ Threads fairness:
 ```
 #### 监控截图 
 
-![Query Summary qps](/img/sb1-query-qps.png)
-![Query Summary duration](/img/sb1-query-dura.png)
+![Query Summary qps](./img/sb1-query-qps.png)
+![Query Summary duration](./img/sb1-query-dura.png)
 
-![](/img/sb1-kv-cpu.png)
-![](/img/sb1-kv-qps.png)
+![](./img/sb1-kv-cpu.png)
+![](./img/sb1-kv-qps.png)
 
 上图（qps图）中三条高线为kv_batch_get_command
 
-![](/img/sb1-grpc-qps.png)
-![](/img/sb1-grpc-dura.png)
+![](./img/sb1-grpc-qps.png)
+![](./img/sb1-grpc-dura.png)
 
 #### 补充
 重复测试，结果比较稳定。eps 74k/s左右。
@@ -177,15 +177,15 @@ Threads fairness:
 
 #### 监控截图
 
-![](/img/sb2-query-dura.png)
-![](/img/sb2-query-qps.png)
+![](./img/sb2-query-dura.png)
+![](./img/sb2-query-qps.png)
 
-![](/img/sb2-kv-cpu.png)
+![](./img/sb2-kv-cpu.png)
 
-|![](/img/sb2-kv-qps-1.png)|![](/img/sb2-kv-qps-2.png) |
+|![](./img/sb2-kv-qps-1.png)|![](./img/sb2-kv-qps-2.png) |
 |:-|:-|
 
-![](/img/sb2-grpc.png)
+![](./img/sb2-grpc.png)
 
 #### 补充
 重复测试，Latency基本一致，eps 12k左右。
@@ -231,14 +231,14 @@ Threads fairness:
 ```
 
 #### 监控截图
-![](/img/sb3-query-dura.png)
-![](/img/sb3-query-qps.png)
-![](/img/sb3-kv-cpu.png)
+![](./img/sb3-query-dura.png)
+![](./img/sb3-query-qps.png)
+![](./img/sb3-kv-cpu.png)
 
-| ![](/img/sb3-kv-qps1.png) | ![](/img/sb3-kv-qps2.png) |
+| ![](./img/sb3-kv-qps1.png) | ![](./img/sb3-kv-qps2.png) |
 |:-|:-|
 
-![](/img/sb3-grpc.png)
+![](./img/sb3-grpc.png)
 
 #### 补充
 eps 2K左右。
@@ -286,15 +286,15 @@ UPDATE_ERROR - Takes(s): 461.2, Count: 23, OPS: 0.0, Avg(us): 5312763, Min(us): 
 
 ### 监控截图
 thread 256的情况下，监控截图如下。
-![](/img/ycsb-query-dura.png)
-![](/img/ycsb-query-qps.png)
+![](./img/ycsb-query-dura.png)
+![](./img/ycsb-query-qps.png)
 
-![](/img/ycsb-kv-cpu.png)
+![](./img/ycsb-kv-cpu.png)
 
-|![](/img/ycsb-kv-qps1.png)|![](/img/ycsb-kv-qps2.png)|
+|![](./img/ycsb-kv-qps1.png)|![](./img/ycsb-kv-qps2.png)|
 |:-|:-|
 
-![](/img/ycsb-grpc.png)
+![](./img/ycsb-grpc.png)
 
 # 3. go-tpc
 ## tpcc
@@ -321,14 +321,14 @@ tpmC: 757.3
 ```
 
 #### 监控截图
-![](/img/tpcc-query-dura.png)
-![](/img/tpcc-query-qps.png)
-![](/img/tpcc-kv-cpu.png)
+![](./img/tpcc-query-dura.png)
+![](./img/tpcc-query-qps.png)
+![](./img/tpcc-kv-cpu.png)
 
-|![](/img/tpcc-kv-qps1.png)|![](/img/tpcc-kv-qps2.png)|
+|![](./img/tpcc-kv-qps1.png)|![](./img/tpcc-kv-qps2.png)|
 |:-|:-|
 
-![](/img/tpcc-grpc.png)
+![](./img/tpcc-grpc.png)
  
 # 分析
 考虑整体的测试报告，从报告与监控中，可以看到以下几点。
@@ -338,16 +338,16 @@ tpmC: 757.3
 但是在读写混合场景中，例如ycsb中workloada的read&update各占一半时，读P99增高比较厉害，从ycsb的summary query p99和grpc p99监控图中可以看出。
 
 再观察多次ycsb测试期间的监控，发现KV Cmd Duration较高，也就是TiDB 发送请求给 TiKV 到收到回复的延迟变大。
-![](/img/kv-cmd-dura-p99.png)
+![](./img/kv-cmd-dura-p99.png)
 再看gRPC的监控，
-![](/img/total-grpc.png)
+![](./img/total-grpc.png)
 Coprocessor P99 duration比较高，pessimistic_lock P99也是。所以推测，这两个地方可能存在性能问题。
 
 而storage监控显示，高于1s的异步写入也有一些。根据[storage](https://docs.pingcap.com/zh/tidb/stable/grafana-tikv-dashboard#storage)指标的解释说明，集群这一表现也不太理想。所以，推测此处也可能有性能问题。
-![](/img/storage.png)
+![](./img/storage.png)
 
 另外读写时，txnLock和resolve指标都升高较明显。
-![](/img/kv-resolve-txnlock.png)
+![](./img/kv-resolve-txnlock.png)
 检查db的事务锁：
 ```
 MySQL [(none)]> select @@GLOBAL.tidb_txn_mode;
